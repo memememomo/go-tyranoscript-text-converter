@@ -77,7 +77,7 @@ func parseText(target string) []*SentenceInfo {
 
 	currentPos := SentencePosBegin
 	for i, sentence := range sentences {
-		if strings.HasPrefix(sentence, ";") {
+		if strings.HasPrefix(sentence, ";") || strings.HasPrefix(sentence, "#") {
 			infos[i] = &SentenceInfo{
 				Text: sentence,
 				Pos:  SentencePosComment,
