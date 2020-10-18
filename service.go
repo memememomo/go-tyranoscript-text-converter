@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -28,6 +29,11 @@ func readAndProcess(configFile, targetFile string) string {
 
 func process(config *Config, target string) string {
 	sentences := parseText(target)
+	if os.Getenv("DEBUG") != "" {
+		for _, s := range sentences {
+			fmt.Printf("%+v\n", s)
+		}
+	}
 
 	var output []string
 	for _, sentence := range sentences {
@@ -83,14 +89,14 @@ func parseText(target string) []*SentenceInfo {
 				Pos:  SentencePosComment,
 			}
 		} else if sentence == "" {
-			currentPos = SentencePosBegin
-			if i != 0 && infos[i-1].Pos == SentencePosIn {
+			if i != 0 && (infos[i-1].Pos == SentencePosIn || infos[i-1].Pos == SentencePosBegin) {
 				infos[i-1].Pos = SentencePosEnd
 			}
 			infos[i] = &SentenceInfo{
 				Text: sentence,
 				Pos:  SentencePosBlank,
 			}
+			currentPos = SentencePosBegin
 		} else {
 			infos[i] = &SentenceInfo{
 				Text: sentence,
